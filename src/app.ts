@@ -3,7 +3,8 @@ import cors from "cors";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+import connectDB from "./config/mongodb";
 
 dotenv.config()
 
@@ -17,10 +18,13 @@ app.use(express.urlencoded({extended: false}));
 app.use(cors());
 app.use(cookieParser());
 
+const PORT = process.env.DEV_PORT || process.env.PROD_PORT
 
+// Database connection
+connectDB()
 
-app.listen(process.env.PORT,()=>{
-    console.log(`Oauth App is running at http://localhost:${process.env.PORT}`)
+app.listen(PORT || '',()=>{
+    console.log(`Oauth App is running at http://localhost:${PORT}`)
 })
 
 
