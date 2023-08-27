@@ -4,15 +4,14 @@ export interface IUSER {
     displayName: string;
     firstName: string;
     lastName: string;
+    email: string;
     password: string;
-    salt: string;
-    otp: number;
-    otpExpire: string;
     gender: string;
     dateOfBirth: string;
     role: string;
     image: string;
     verified: boolean;
+    provider: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -25,7 +24,7 @@ export interface GoogleOauthToken {
     refresh_token: string;
     token_type: string;
     scope: string;
-  }
+}
 
 
 export interface GoogleUserResult {

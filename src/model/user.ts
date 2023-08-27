@@ -26,19 +26,12 @@ const UserSchema = new mongoose.Schema({
         type: String,
         require: true
     },
+    email: {
+        type: String,
+        unique: true,
+        require: true
+    },
     password: {
-        type: String,
-        require: true
-    },
-    salt: {
-        type: String,
-        require: true
-    },
-    otp: {
-        type: Number,
-        require: true
-    },
-    otpExpire: {
         type: String,
         require: true
     },
@@ -59,7 +52,12 @@ const UserSchema = new mongoose.Schema({
     },
     verified: {
         type: Boolean,
-        require: true
+        default: false,
+        require: false
+    },
+    provider: {
+        type: String,
+        require: false
     },
     createdAt: {
         type: Date,
