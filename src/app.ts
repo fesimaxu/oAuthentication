@@ -9,8 +9,8 @@ import userRouter from "./routes/userRoutes";
 import authRouter from "./routes/authRoutes";
 import sessionRouter from "./routes/sessionRoutes";
 import { error404, error500 } from "./middleware/error";
-
-
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from "./utils/swagger";
 
 const { PORT } = config;
 
@@ -36,6 +36,7 @@ app.use(
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/session", sessionRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {explorer: true}));
 
 
 app.all('*', error404);
@@ -47,7 +48,8 @@ const DB_PORT = PORT
 connectDB()
 
 app.listen(DB_PORT || '',()=>{
-    console.log(`Oauth App is running at http://localhost:${DB_PORT}`)
+    console.log(`Oauth App is running at http://localhost:${DB_PORT}/`);
+    console.log(`Docs available at http://localhost:${DB_PORT}/api-doc`);
 })
 
 
