@@ -6,7 +6,7 @@ import {
   getGoogleOauthToken,
   getGoogleUser,
 } from "../utils/services/session";
-import { cookieTimeout, generateSignature, hashPassword } from "../utils/services/helper";
+import { cookieTimeout, generateSignature, hashPassword, verifyPassword } from "../utils/services/helper";
 
 
 
@@ -77,7 +77,7 @@ export const loginUser = async (
 ) => {
   try {
 
-    const { email } = req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({
       email
@@ -96,23 +96,30 @@ export const loginUser = async (
         message: `Use ${user.provider} OAuth2 instead`,
       });
     }
+    //console.log( "user ",user)
+    const validatePassword = await verifyPassword(password, user.password);
+    
 
+    if(!validatePassword){
+      return res.status(404).json({
+        status: "fail",
+        message: "Invalid email or password",
+      })
+    }
 
-
-    const token = generateSignature({
+    const token = await generateSignature({
       id: user._id,
-      email: user.email,
-      verified: user.verified
+      email: user.email
     })
-
+   
     res.cookie("token", token, {
       expires: cookieTimeout()
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       message: "User logged in successfully",
-      token
+      
     });
   } catch (err: any) {
     next(err);
@@ -198,7 +205,7 @@ export const googleOauthHandler = async (req: Request, res: Response) => {
 };
 
 
-
+// to return the authenticated user
 export const getUserDetails = (
   req: Request,
   res: Response,
@@ -229,7 +236,10 @@ export const logOutUser = async (
   try {
 
     res.cookie("token", "", { maxAge: -1 });
-    res.status(200).json({ status: "success" });
+   return res.status(200).json({ 
+      status: "success",
+      message: "log out successfully"
+    });
 
   } catch (err: any) {
     next(err);

@@ -5,6 +5,10 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import connectDB from "./config/mongodb";
 import config from "./config/dbconfig";
+import userRouter from "./routes/userRoutes";
+import authRouter from "./routes/authRoutes";
+import sessionRouter from "./routes/sessionRoutes";
+import { error404, error500 } from "./middleware/error";
 
 
 
@@ -19,6 +23,23 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cors());
 app.use(cookieParser());
+
+
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN as unknown as string;
+app.use(
+  cors({
+    credentials: true,
+    origin: [FRONTEND_ORIGIN],
+  })
+);
+
+app.use("/users", userRouter);
+app.use("/auth", authRouter);
+app.use("/session", sessionRouter);
+
+
+app.all('*', error404);
+app.use(error500);
 
 const DB_PORT = PORT
 
